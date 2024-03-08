@@ -213,8 +213,8 @@ export class ChatruletkaDriver {
             this.modules.hotkeys.register()
         }
 
-        if (this.modules.faceapi && globalThis.platformSettings.get("skipMale") || globalThis.platformSettings.get("skipFemale") || globalThis.platformSettings.get("enableFaceApi")) {
-            this.modules.faceapi.injectFaceApi()
+        if (this.modules.faceapi && (globalThis.platformSettings.get("skipMale") || globalThis.platformSettings.get("skipFemale") || globalThis.platformSettings.get("skipUnderage") || globalThis.platformSettings.get("enableFaceApi"))) {
+            this.modules.faceapi.injectFaceApi();
         }
 
         if (this.modules.streamer && globalThis.platformSettings.get("streamer")) {
