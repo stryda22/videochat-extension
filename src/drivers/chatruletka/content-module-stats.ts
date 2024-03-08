@@ -110,6 +110,10 @@ export class StatsModule {
         this.updStats(false)
     }
 
+    public increaseUnderageSkip() {
+        this.stats.countUnderage++;
+        this.updStats(false);
+
     public increaseStatsTime(param: number) {
         this.stats.time += param
         this.updStats(false)
