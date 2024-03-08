@@ -14,6 +14,7 @@ export class StatsModule {
             countManSkip: 0,
             countMaleSkip: 0,
             countFemaleSkip: 0,
+            countUnderage: 0, // New property for tracking underage skips
             time: 0
         }
     }
@@ -276,6 +277,13 @@ export class ControlsTabStats {
                     }),
                     utils.createElement('br'),
                     utils.createElement('span', {
+                        innerText: chrome.i18n.getMessage("statsUnderageSkip")
+                    }),
+                    utils.createElement('span', {
+                        id: 'stUnderage'
+                    }),
+                    utils.createElement('br'),
+                    utils.createElement('span', {
                         innerText: chrome.i18n.getMessage("statsManualSkip")
                     }),
                     utils.createElement('span', {
@@ -295,13 +303,6 @@ export class ControlsTabStats {
                     }),
                     utils.createElement('span', {
                         id: 'stFmlCnt'
-                    }),
-                    utils.createElement('br'),
-                    utils.createElement('span', {
-                        innerText: chrome.i18n.getMessage("statsUnderageSkip")
-                    }),
-                    utils.createElement('span', {
-                        id: 'stUnderage'
                     }),
                 ]
             )
