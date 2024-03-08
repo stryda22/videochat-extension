@@ -114,7 +114,9 @@ export class StatsModule {
         this.stats.countUnderage++;
         this.updStats(false);
 
-    public increaseStatsTime(param: number) {
+    }
+    
+        public increaseStatsTime(param: number) {
         this.stats.time += param
         this.updStats(false)
     }
