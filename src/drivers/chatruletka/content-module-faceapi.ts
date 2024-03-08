@@ -8,6 +8,7 @@ export class FaceapiModule {
         autoBan: false,
         skipMale: false,
         skipFemale: false,
+        skipUnderage: false, // Added skipUnderage setting
         enableFaceApi: false,
     }
     public settings = [
@@ -53,6 +54,22 @@ export class FaceapiModule {
             key: "skipFemale",
             text: chrome.i18n.getMessage("skip_females"),
             tooltip: chrome.i18n.getMessage("tooltipSkipFemales"),
+            enable: () => {
+                if (!this.faceApiLoaded)
+                    this.injectFaceApi()
+            },
+            disable: () => {
+                this.setText('')
+                if (!this.faceApiLoaded)
+                    this.injectFaceApi()
+            }
+        },
+        {
+            type: "checkbox",
+            important: false,
+            key: "skipUnderage", // Added skipUnderage setting
+            text: chrome.i18n.getMessage("skip_underage"),
+            tooltip: chrome.i18n.getMessage("tooltipSkipUnderage"),
             enable: () => {
                 if (!this.faceApiLoaded)
                     this.injectFaceApi()
@@ -156,11 +173,12 @@ export class FaceapiModule {
         if (!this.faceApiLoaded) {
             return
         }
-        if (!globalThis.platformSettings.get("skipMale") && !globalThis.platformSettings.get("skipFemale") && !globalThis.platformSettings.get("enableFaceApi"))
+        if (!globalThis.platformSettings.get("skipMale") && !globalThis.platformSettings.get("skipFemale") && !globalThis.platformSettings.get("skipUnderage") && !globalThis.platformSettings.get("enableFaceApi"))
             return
         let stop = false
         let skip_m = false
         let skip_f = false
+        let skip_u = false // Added skip_u for skipping underage
         let text = ''
         if (this.driver.stage === 4) {
             this.stop()
@@ -182,6 +200,13 @@ export class FaceapiModule {
                     stop = true
                     if (this.driver.modules.stats) {
                         this.driver.modules.stats.increaseCountFemales()
+                    }
+                }
+                if (array[i].age < 18 && globalThis.platformSettings.get("skipUnderage")) {
+                    skip_u = true
+                    stop = true
+                    if (this.driver.modules.stats) {
+                        this.driver.modules.stats.increaseUnderageSkip()
                     }
                 }
             }
@@ -215,7 +240,19 @@ export class FaceapiModule {
                 }
             }
 
-            if (!globalThis.platformSettings.get("skipMale") && !globalThis.platformSettings.get("skipFemale") && !globalThis.platformSettings.get("enableFaceApi"))
+            if (skip_u && globalThis.platformSettings.get("skipUnderage")) {
+                text += `<b>underage skipping...</b></br>`;
+                (document.getElementsByClassName('buttons__button start-button')[0] as HTMLElement).click()
+                console.dir("UNDERAGE SKIPPED")
+                if (this.driver.modules.stats) {
+                    this.driver.modules.stats.increaseUnderageSkip()
+                }
+                if (this.driver.modules.blacklist && globalThis.platformSettings.get("autoBan")) {
+                    this.driver.modules.blacklist.processAutoBan(this.driver.modules.geolocation.curIps)
+                }
+            }
+
+            if (!globalThis.platformSettings.get("skipMale") && !globalThis.platformSettings.get("skipFemale") && !globalThis.platformSettings.get("skipUnderage") && !globalThis.platformSettings.get("enableFaceApi"))
                 return
 
             if (text !== '')
