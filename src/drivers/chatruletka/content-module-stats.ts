@@ -150,6 +150,7 @@ export class StatsModule {
         (document.getElementById("stMlCnt") as HTMLElement).innerText = this.stats.countMales;
         (document.getElementById("stFmlCnt") as HTMLElement).innerText = this.stats.countFemales;
         (document.getElementById("stMnSk") as HTMLElement).innerText = this.stats.countManSkip;
+        (document.getElementById("stUnderage") as HTMLElement).innerText = this.stats.countUnderage;
 
         if (this.driver.modules.blacklist) {
             (document.getElementById("stNwIp") as HTMLElement).innerText = this.stats.countNew;
@@ -288,6 +289,13 @@ export class ControlsTabStats {
                     }),
                     utils.createElement('span', {
                         id: 'stFmlCnt'
+                    }),
+                    utils.createElement('br'),
+                    utils.createElement('span', {
+                        innerText: chrome.i18n.getMessage("statsUnderageSkip")
+                    }),
+                    utils.createElement('span', {
+                        id: 'stUnderage'
                     }),
                 ]
             )
